@@ -1,11 +1,31 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+let genAI, model;
+if (process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes("paste-your-new-api-key-here")) {
+  try {
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  } catch (err) {
+    console.warn("Failed to initialize Gemini AI:", err.message);
+  }
+}
 
 const VALID_ANGLES = ["public_health", "economic", "environmental", "welfare", "policy"];
 
 export async function classifyStory(story) {
-  const prompt = `You are a senior analyst at OpenPAWS, an organization at the intersection of AI and animal advocacy. Your job is to analyze news stories and classify them for maximum advocacy impact.
+  // Fallback if AI is not available
+  if (!model) {
+    console.log("Using fallback classification (AI not available)");
+    return {
+      angle: "welfare",
+      urgency_score: 5,
+      urgency_reason: "Manual classification - AI not available",
+      key_facts: [story.title, story.summary?.substring(0, 100) || ""].filter(Boolean),
+      advocacy_hook: "This story requires attention from animal advocates.",
+      angle_explanation: "Default classification - AI services unavailable",
+    };
+  }
+  const prompt = `You are a VIRAL CONTENT STRATEGIST at OpenPAWS, an animal advocacy organization. Your job is to analyze news stories and identify content with maximum viral potential for Twitter/X and mainstream media.
 
 STORY TO ANALYZE:
 Title: ${story.title}
@@ -20,13 +40,22 @@ Your task: Return ONLY a valid JSON object. No markdown. No explanation. No extr
   "urgency_score": <integer 1-10>,
   "urgency_reason": "<one clear sentence explaining the score>",
   "key_facts": [
-    "<most important fact from the story>",
-    "<second important fact>",
-    "<third important fact>"
+    "<most shocking/viral-worthy fact from the story>",
+    "<second most shareable statistic or detail>",
+    "<third fact that creates emotional impact>"
   ],
-  "advocacy_hook": "<the single most powerful sentence an advocate could use right now>",
-  "angle_explanation": "<why you picked this angle over others>"
+  "advocacy_hook": "<THE PERFECT TWEET HOOK - maximum 15 words, creates immediate emotional reaction>",
+  "viral_angle": "<why this could go viral on social media>",
+  "trending_hashtags": ["<hashtag1>", "<hashtag2>", "<hashtag3>"],
+  "angle_explanation": "<why you picked this angle for maximum impact>"
 }
+
+VIRAL CONTENT PRINCIPLES:
+- Focus on SHOCK VALUE, EMOTIONAL TRIGGERS, and SHAREABILITY
+- Look for numbers, statistics, and concrete details that create outrage
+- Identify human/animal faces and personal stories
+- Find connections to trending topics or current events
+- Prioritize content that creates immediate "WTF" reactions
 
 ANGLE GUIDE:
 - public_health  → disease outbreaks, food safety, antibiotic resistance, zoonotic threats, H5N1
@@ -43,13 +72,8 @@ URGENCY SCORING:
 1-3 → Background, low urgency`;
 
   try {
-    const response = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 600,
-      messages: [{ role: "user", content: prompt }],
-    });
-
-    const raw = response.content[0].text.trim();
+    const response = await model.generateContent(prompt);
+    const raw = response.response.text().trim();
     const parsed = JSON.parse(raw);
 
     return {

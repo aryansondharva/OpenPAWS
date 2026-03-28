@@ -1,8 +1,53 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+let genAI, model;
+if (process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes("paste-your-new-api-key-here")) {
+  try {
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  } catch (err) {
+    console.warn("Failed to initialize Gemini AI:", err.message);
+  }
+}
 
 export async function generateContent(story) {
+  // Fallback if AI is not available
+  if (!model) {
+    console.log("Using fallback content generation (AI not available)");
+    return {
+      twitter_thread: [
+        `🚨 ${story.title} #AnimalAdvocacy #Breaking`,
+        `This story highlights important issues that need our attention.`,
+        `The implications extend beyond what we see on the surface.`,
+        `We must take action to create meaningful change.`,
+        `Join us in advocating for better policies. #ActNow`
+      ],
+      press_statement: {
+        headline: story.title,
+        dateline: `NEW YORK, ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`,
+        lead_paragraph: `OpenPAWS responds to recent developments regarding ${story.title}, calling for immediate attention to the implications for animal welfare.`,
+        context_paragraph: "This incident underscores the ongoing need for stronger protections and oversight in animal-related industries.",
+        quote_paragraph: "This situation requires immediate action and comprehensive reform,\" said [SPOKESPERSON NAME], Director of OpenPAWS. \"We cannot ignore the systemic issues that lead to such outcomes.",
+        call_to_action: "OpenPAWS calls for immediate policy changes and increased accountability.",
+        boilerplate: "About OpenPAWS: OpenPAWS is an organization working at the intersection of AI and animal advocacy. We build tools and help organizations across the globe become more efficient, develop better advocates, and organize the movement.",
+        contact: "Media Contact: [CONTACT NAME] | press@openpaws.org | +91-XXXXXXXXXX"
+      },
+      op_ed: {
+        headline: `Why ${story.title} demands our immediate attention`,
+        angle_summary: "This story reveals systemic issues that require comprehensive reform.",
+        opening_line: "When we read headlines like today's, we must ask ourselves: how did we get here, and more importantly, where do we go from here?",
+        talking_points: [
+          "The immediate impact on animals cannot be ignored",
+          "Systemic failures allow these situations to persist",
+          "Public awareness is the first step toward change",
+          "Policy solutions exist but require political will",
+          "Individual action can drive collective impact"
+        ],
+        suggested_outlets: ["The New York Times", "The Guardian", "Washington Post"],
+        pitch_note: "This piece offers timely analysis of an urgent issue with clear policy implications."
+      }
+    };
+  }
   const { title, summary, source, publishedAt, classification } = story;
   const angle = classification?.angle?.replace("_", " ") || "welfare";
   const hook = classification?.advocacy_hook || "";
@@ -69,12 +114,7 @@ RULES:
 - Write like a person, not a press release machine
 - Be specific — vague advocacy content helps no one`;
 
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 2500,
-    messages: [{ role: "user", content: prompt }],
-  });
-
-  const raw = response.content[0].text.trim();
+  const response = await model.generateContent(prompt);
+  const raw = response.response.text().trim();
   return JSON.parse(raw);
 }

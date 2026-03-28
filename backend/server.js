@@ -113,7 +113,7 @@ app.post("/api/generate", async (req, res) => {
 // ─────────────────────────────────────────────
 app.get("/api/health", (req, res) => {
   const keys = {
-    anthropic: !!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_API_KEY.includes("your-"),
+    gemini: !!process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes("your-"),
     gnews: !!process.env.GNEWS_API_KEY && !process.env.GNEWS_API_KEY.includes("your-"),
     currents: !!process.env.CURRENTS_API_KEY && !process.env.CURRENTS_API_KEY.includes("your-"),
     newsdata: !!process.env.NEWSDATA_API_KEY && !process.env.NEWSDATA_API_KEY.includes("your-"),
