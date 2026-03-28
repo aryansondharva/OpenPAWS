@@ -10,13 +10,11 @@ export default function Topbar({
   filterAngle, setFilterAngle, filterUrgency, setFilterUrgency, onRefresh,
 }) {
   return (
-    <header className="border-b border-slate-100 bg-white/80 backdrop-blur-xl sticky top-0 z-50">
-      <div className="flex items-center gap-8 px-8 py-4 max-w-[1600px] mx-auto">
+    <header className="border-b border-slate-100 bg-white/80 backdrop-blur-xl sticky top-0 z-50 pl-16">
+      <div className="flex items-center gap-6 px-4 py-3 max-w-[1600px] mx-auto">
         {/* Brand */}
-        <div className="flex items-center gap-3.5 group cursor-pointer">
-          <div className="w-10 h-10 bg-blue-600 flex items-center justify-center rounded-[14px] text-white shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform duration-300">
-            <span className="text-xl">⚡</span>
-          </div>
+        <div className="flex items-center gap-2.5 group cursor-pointer shrink-0">
+          
           <div className="text-xl font-black text-slate-900 tracking-tighter">
             Open<span className="text-blue-600">PAWS</span>
           </div>

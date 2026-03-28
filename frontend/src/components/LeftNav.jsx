@@ -12,73 +12,101 @@ export default function LeftNav({ onOpenSettings }) {
   const { settings } = useSettings();
 
   return (
-    <aside className="w-56 flex-shrink-0 flex flex-col gap-6 py-2">
-      {/* Brand */}
-      <div className="flex items-center gap-3 px-2 mb-4 group cursor-pointer">
-        <div className="w-8 h-8 bg-blue-600 flex items-center justify-center rounded-lg text-white group-hover:scale-110 transition-transform shadow-lg shadow-blue-200">
-          <span className="text-lg">⚡</span>
+    <aside className="fixed left-0 top-0 bottom-0 z-[100] flex group transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:w-64 w-20">
+      <div className="flex flex-col h-full w-full bg-white/80 backdrop-blur-2xl border-r border-slate-100 shadow-[20px_0_40px_-10px_rgba(0,0,0,0.03)] overflow-hidden">
+        
+        {/* Brand Container */}
+        <div className="px-5 py-8 flex items-center overflow-hidden h-24">
+          <div className="w-10 h-10 bg-blue-600 flex items-center justify-center rounded-2xl text-white shadow-lg shadow-blue-200 shrink-0 group-hover:rotate-[360deg] transition-transform duration-700">
+            <span className="text-xl">⚡</span>
+          </div>
+          <div className="ml-4 text-xl font-black text-slate-900 tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity duration-500 whitespace-nowrap">
+            Open<span className="text-blue-600">PAWS</span>
+          </div>
         </div>
-        <div className="text-xl font-black text-slate-900 leading-none tracking-tighter">
-          Open<span className="text-blue-600">PAWS</span>
-        </div>
-      </div>
 
-      {/* Nav Menu */}
-      <nav className="flex flex-col gap-1.5 pt-4">
-        {NAV_ITEMS.map((item) => (
-          <button
-            key={item.id}
-            className={`flex items-center gap-4 px-3.5 py-2.5 rounded-2xl transition-all group ${
-              item.id === "feed"
-                ? "bg-blue-50 text-blue-600 shadow-sm ring-1 ring-blue-100/50"
-                : "text-slate-400 hover:bg-slate-50 hover:text-slate-900"
-            }`}
-          >
-            <span className="text-xl group-hover:scale-110 transition-transform grayscale group-hover:grayscale-0">{item.icon}</span>
-            <span className="text-[11px] font-black uppercase tracking-widest">{item.label}</span>
-          </button>
-        ))}
-      </nav>
-
-      {/* Topics / Tags Section */}
-      <div className="mt-8 px-3 space-y-6">
-        <div className="text-[10px] text-slate-300 font-black uppercase tracking-[0.2em] px-1 flex items-center justify-between">
-          <span>Intelligence Topics</span>
-        </div>
-        <div className="flex flex-col gap-3">
-          {["Climate Policy", "Tech Regulation", "Election Cycle", "Global Trade"].map((topic) => (
-            <button key={topic} className="flex items-center gap-3 group text-slate-400 hover:text-blue-600 transition-all hover:translate-x-1 decoration-blue-500/30">
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-200 group-hover:bg-blue-400 transition-colors" />
-              <span className="text-xs font-bold">{topic}</span>
+        {/* Navigation Items */}
+        <nav className="flex-1 px-3.5 space-y-2 mt-4 overflow-y-auto no-scrollbar">
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item.id}
+              className={`flex items-center w-full rounded-2xl transition-all duration-300 group/btn h-12 relative overflow-hidden ${
+                item.id === "feed"
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-slate-400 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              <div className="w-[52px] h-full flex items-center justify-center shrink-0">
+                <span className={`text-xl transition-all duration-500 ${item.id === 'feed' ? 'scale-110' : 'grayscale group-hover/btn:grayscale-0 group-hover/btn:scale-110 opacity-70 group-hover/btn:opacity-100'}`}>
+                  {item.icon}
+                </span>
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-[0.15em] opacity-0 group-hover:opacity-100 transition-all duration-500 whitespace-nowrap ml-1">
+                {item.label}
+              </span>
+              
+              {/* Active Indicator Strip */}
+              {item.id === "feed" && (
+                <div className="absolute left-0 top-3 bottom-3 w-1 bg-blue-600 rounded-r-full" />
+              )}
             </button>
           ))}
-        </div>
-      </div>
 
-      {/* User Status Card */}
-      <div className="mt-auto p-4 border border-slate-100 rounded-[28px] bg-white shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 space-y-5">
-        <div className="flex items-center gap-3 px-1">
-          <div className="w-12 h-12 rounded-[18px] bg-slate-50 overflow-hidden border border-slate-100 shadow-inner group cursor-pointer hover:border-blue-300 transition-all duration-500">
-            <img 
-              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${settings.operatorName}`} 
-              alt="avatar" 
-              className="group-hover:scale-110 transition-transform duration-500" 
-            />
-          </div>
-          <div className="space-y-0.5">
-            <div className="text-xs font-black text-slate-900 tracking-tight">{settings.operatorName}</div>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-              <div className="text-[9px] text-emerald-600 font-black uppercase tracking-widest">{settings.operatorId}</div>
+          {/* Separator */}
+          <div className="mx-2 my-8 border-t border-slate-50 transition-all opacity-0 group-hover:opacity-100" />
+
+          {/* Intelligence Topics (Expand Only) */}
+          <div className="px-2 space-y-6 opacity-0 group-hover:opacity-100 transition-all duration-500">
+            <h4 className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] whitespace-nowrap pl-2">
+              Analytic Topics
+            </h4>
+            <div className="space-y-4">
+              {["Climate Policy", "Tech Regulation", "Election Cycle", "Global Trade"].map((topic) => (
+                <button 
+                  key={topic} 
+                  className="flex items-center gap-4 group/topic text-slate-400 hover:text-blue-600 transition-all whitespace-nowrap pl-2"
+                >
+                  <div className="w-1.5 h-1.5 rounded-full bg-slate-200 group-hover/topic:bg-blue-400 transition-colors shrink-0" />
+                  <span className="text-[11px] font-bold tracking-tight">{topic}</span>
+                </button>
+              ))}
             </div>
           </div>
+        </nav>
+
+        {/* User Card Area */}
+        <div className="p-3.5 mt-auto mb-6">
+          <div className="relative group/card flex items-center p-2 rounded-[28px] transition-all bg-white border border-transparent group-hover:border-slate-100 group-hover:shadow-2xl group-hover:shadow-slate-200/50">
+            <div 
+              className="w-10 h-10 rounded-2xl bg-slate-50 overflow-hidden border border-slate-100 shrink-0 cursor-pointer hover:border-blue-400 transition-all duration-500"
+              onClick={onOpenSettings}
+            >
+              <img 
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${settings.operatorName}`} 
+                alt="avatar" 
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
+              />
+            </div>
+            
+            <div className="ml-4 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500 whitespace-nowrap">
+              <div className="text-[12px] font-black text-slate-900 tracking-tight leading-none mb-1">{settings.operatorName}</div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <div className="text-[9px] text-emerald-600 font-black uppercase tracking-widest">{settings.operatorId}</div>
+              </div>
+            </div>
+
+            {/* Quick Settings Icon (Collapsed) */}
+            {!window.matchMedia("(min-width: 1024px)").matches && (
+               <button 
+                onClick={onOpenSettings}
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
+              >
+                <span className="text-[10px]">⚙️</span>
+              </button>
+            )}
+          </div>
         </div>
-        <button 
-          onClick={onOpenSettings}
-          className="w-full py-3 bg-slate-900 text-white rounded-[18px] text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 hover:bg-slate-800 active:scale-[0.98] shadow-lg shadow-slate-200"
-        >
-          Settings
-        </button>
       </div>
     </aside>
   );

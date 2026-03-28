@@ -73,14 +73,15 @@ export default function App() {
         </div>
       )}
 
-      <main className="flex flex-1 overflow-hidden p-6 gap-6">
-        {/* Left Column: Navigation */}
+      <main className="flex flex-1 overflow-hidden p-6 pl-24 gap-6">
+        {/* Left Column: Navigation (Fixed Component) */}
         <LeftNav onOpenSettings={() => setShowSettings(true)} />
 
 
         {/* Center Column: News Feed */}
         <div className="flex-1 flex flex-col overflow-hidden min-w-[500px]">
-          <div className="flex items-center justify-between mb-10 px-4">
+
+          <div className="flex items-center justify-between mb-6 px-1">
             <div className="space-y-1">
               <h1 className="text-2xl font-black text-slate-900 tracking-tight">Signal Feed</h1>
               <div className="flex items-center gap-2">
@@ -103,7 +104,8 @@ export default function App() {
         </div>
 
         {/* Right Column: Detailed Intelligence Panel */}
-        <div className="w-[480px] flex-shrink-0 flex flex-col bg-white rounded-[32px] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-y-auto overflow-x-hidden">
+        <div className="w-[480px] flex-shrink-0 flex flex-col bg-white rounded-[32px] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-y-auto overflow-x-hidden custom-scrollbar">
+
           {selectedStory ? (
             <div className="flex flex-col animate-in fade-in zoom-in-95 duration-700 w-full">
               <StoryPanel story={selectedStory} onGenerate={handleGenerate} generating={generating} hasContent={!!content} />
