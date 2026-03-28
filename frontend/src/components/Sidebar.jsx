@@ -1,21 +1,25 @@
-import { ANGLES, urgencyStyle, timeAgo } from "../utils/constants.js";
+import { ANGLES, timeAgo } from "../utils/constants.js";
 
 export default function Sidebar({ stories, loading, selectedId, onSelect }) {
   if (loading) return <SkeletonList />;
+  
   if (!stories.length) return (
-    <div className="flex flex-col items-center justify-center h-64 text-center px-6 gap-2">
-      <div className="text-3xl">🔍</div>
-      <div className="text-sm text-zinc-400">No stories found</div>
-      <div className="text-xs text-zinc-600">Try refreshing or widening the date range</div>
+    <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-12 bg-white rounded-3xl border border-dashed border-slate-200 animate-in fade-in duration-700">
+      <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-4xl mb-6 shadow-inner ring-1 ring-slate-100">
+        📢
+      </div>
+      <h3 className="text-xl font-black text-slate-900 tracking-tight">Intelligence Void</h3>
+      <p className="text-sm text-slate-400 mt-2 max-w-[280px] font-bold uppercase tracking-wider leading-relaxed">No strategic updates found. Adjust parameters or re-synchronize.</p>
     </div>
   );
 
   return (
-    <div className="p-2.5 space-y-1.5">
-      {stories.map((story) => (
+    <div className="flex flex-col gap-3 overflow-y-auto pr-3 custom-scrollbar flex-1 pb-10">
+      {stories.map((story, index) => (
         <StoryCard
           key={story.id}
           story={story}
+          index={index}
           selected={story.id === selectedId}
           onSelect={() => onSelect(story)}
         />
@@ -24,65 +28,108 @@ export default function Sidebar({ stories, loading, selectedId, onSelect }) {
   );
 }
 
-function StoryCard({ story, selected, onSelect }) {
+function StoryCard({ story, selected, onSelect, index }) {
   const cls = story.classification;
-  const angle = ANGLES[cls?.angle] || ANGLES.welfare;
-  const urgency = urgencyStyle(cls?.urgency_score || 0);
+  const angleKey = cls?.angle || "welfare"; // Default to welfare for now
+  const angle = ANGLES[angleKey] || ANGLES.welfare;
   const score = cls?.urgency_score || 0;
-
+  
   return (
-    <button
-      onClick={onSelect}
-      className={`w-full text-left rounded-xl p-3 border transition-all duration-150 ${
-        selected
-          ? "bg-zinc-800 border-emerald-700/60 ring-1 ring-emerald-700/30"
-          : "bg-zinc-900/60 border-zinc-800/60 hover:bg-zinc-800/60 hover:border-zinc-700"
+    <div 
+      className={`group relative flex flex-col transition-all duration-300 transform active:scale-[0.98] ${
+        selected 
+          ? "animate-in zoom-in-95" 
+          : "hover:-translate-y-0.5"
       }`}
+      style={{ animationDelay: `${index * 50}ms` }}
+      onClick={onSelect}
     >
-      {/* Row 1: angle + urgency */}
-      <div className="flex items-center gap-2 mb-2">
-        <span className={`tag ${angle.bg} ${angle.text}`}>
-          <span className={`inline-block w-1.5 h-1.5 rounded-full ${angle.dot} mr-1.5 align-middle`} />
-          {angle.short}
-        </span>
-        <span className={`tag ml-auto font-mono font-semibold ${urgency.bg} ${urgency.color}`}>
-          {score}/10
-        </span>
-      </div>
-
-      {/* Title */}
-      <p className={`text-sm font-medium leading-snug mb-1.5 line-clamp-2 ${selected ? "text-white" : "text-zinc-200"}`}>
-        {story.title}
-      </p>
-
-      {/* Hook */}
-      {cls?.advocacy_hook && (
-        <p className="text-xs text-zinc-500 italic leading-snug line-clamp-1 mb-2">
-          {cls.advocacy_hook}
-        </p>
+      {/* Selection Border Glow */}
+      {selected && (
+        <div className="absolute -inset-[2px] bg-gradient-to-r from-blue-600/50 to-indigo-600/50 rounded-[22px] blur-sm opacity-50 z-0 animate-pulse" />
       )}
 
-      {/* Bottom: source + time */}
-      <div className="flex items-center gap-2 text-[11px] text-zinc-600">
-        <span className="truncate">{story.source}</span>
-        <span className="ml-auto flex-shrink-0">{timeAgo(story.publishedAt)}</span>
+      <div className={`relative z-10 p-5 rounded-2xl border transition-all duration-300 ${
+        selected 
+          ? "bg-white border-blue-500 shadow-[0_12px_32px_-8px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/10" 
+          : "bg-white border-slate-100 hover:border-slate-300 shadow-sm hover:shadow-md"
+      }`}>
+        
+        {/* Left Indicator Strip */}
+        <div className={`absolute left-0 top-6 bottom-6 w-1 rounded-r-full transition-all duration-500 ${
+          selected ? angle.bg : "bg-slate-100 group-hover:bg-slate-300"
+        } ${angle.dot}`} />
+
+        <div className="flex flex-col gap-3.5 pl-3">
+          {/* Header: Source + Meta */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-5 h-5 bg-slate-50 border border-slate-100 rounded-md flex items-center justify-center overflow-hidden">
+                <img src={`https://www.google.com/s2/favicons?domain=${new URL(story.url || "https://google.com").hostname}&sz=32`} alt="" className="w-3.5 h-3.5" />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{story.source}</span>
+              <span className="text-[10px] font-black text-slate-300">/</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{timeAgo(story.publishedAt)}</span>
+            </div>
+            {score >= 7 && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-50 rounded-full border border-red-100/50">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                <span className="text-[9px] font-black text-red-600 uppercase tracking-tighter">Priority</span>
+              </div>
+            )}
+          </div>
+
+          {/* Title */}
+          <h2 className={`text-[15px] font-black leading-[1.4] transition-colors tracking-tight ${
+            selected ? "text-slate-900" : "text-slate-700 group-hover:text-slate-900"
+          }`}>
+            {story.title}
+          </h2>
+
+          {/* Tags / Indicators */}
+          <div className="flex items-center gap-2 pt-1">
+            <div className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all ${
+              selected 
+                ? "bg-blue-600 text-white border-blue-500 shadow-lg shadow-blue-200" 
+                : "bg-slate-50 text-slate-400 border-slate-100"
+            }`}>
+              {angle.short}
+            </div>
+            
+            {score > 0 && (
+              <div className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${
+                selected ? "bg-white text-blue-600 border-blue-100" : "bg-slate-50 text-slate-300 border-slate-100"
+              }`}>
+                Urgency <span className={selected ? "text-blue-600" : "text-slate-500"}>{score}/10</span>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </button>
+    </div>
   );
 }
 
 function SkeletonList() {
   return (
-    <div className="p-2.5 space-y-1.5">
-      {[...Array(8)].map((_, i) => (
-        <div key={i} className="bg-zinc-900/60 rounded-xl p-3 border border-zinc-800/60 animate-pulse">
-          <div className="flex gap-2 mb-2">
-            <div className="h-5 w-20 bg-zinc-800 rounded-full" />
-            <div className="h-5 w-10 bg-zinc-800 rounded-full ml-auto" />
+    <div className="flex flex-col gap-4 pr-3">
+      {[...Array(5)].map((_, i) => (
+        <div key={i} className="bg-white rounded-2xl p-6 border border-slate-50 space-y-5 animate-pulse">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="h-5 w-5 bg-slate-100 rounded-md" />
+              <div className="h-2.5 w-24 bg-slate-100 rounded-full" />
+            </div>
+            <div className="h-2 w-12 bg-slate-50 rounded-full" />
           </div>
-          <div className="h-3.5 bg-zinc-800 rounded w-full mb-1.5" />
-          <div className="h-3.5 bg-zinc-800 rounded w-3/4 mb-2" />
-          <div className="h-3 bg-zinc-800/60 rounded w-1/2" />
+          <div className="space-y-3">
+            <div className="h-3.5 bg-slate-100 rounded-lg w-full" />
+            <div className="h-3.5 bg-slate-100 rounded-lg w-4/5" />
+          </div>
+          <div className="flex gap-2">
+            <div className="h-6 w-20 bg-slate-50 rounded-lg" />
+            <div className="h-6 w-16 bg-slate-50 rounded-lg" />
+          </div>
         </div>
       ))}
     </div>

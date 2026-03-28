@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 const TABS = [
-  { id: "twitter", label: "Twitter / X thread", icon: "𝕏" },
-  { id: "press",   label: "Press statement",    icon: "📄" },
-  { id: "oped",    label: "Op-ed angles",        icon: "✍️" },
+  { id: "twitter", label: "Twitter Thread", icon: "𝕏" },
+  { id: "press",   label: "Press Statement", icon: "📄" },
+  { id: "oped",    label: "Op-Ed Angles",    icon: "✍️" },
 ];
 
 export default function ContentPanel({ content, generating }) {
@@ -18,10 +18,9 @@ export default function ContentPanel({ content, generating }) {
 
   if (generating) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="w-9 h-9 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
-        <div className="text-sm text-zinc-400">Claude is writing your advocacy content...</div>
-        <div className="text-xs text-zinc-600">Tweet thread · Press statement · Op-ed angles</div>
+      <div className="flex flex-col items-center justify-center p-20 gap-6 min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin" />
+        <p className="text-sm font-bold text-slate-900 animate-pulse">Generating Response...</p>
       </div>
     );
   }
@@ -31,15 +30,15 @@ export default function ContentPanel({ content, generating }) {
   return (
     <div className="flex flex-col flex-1">
       {/* Tab bar */}
-      <div className="flex border-b border-zinc-800/60 px-5 bg-zinc-900/20">
+      <div className="flex border-b border-slate-200 px-6 sticky top-0 bg-white z-40">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`py-3 px-4 text-xs font-medium border-b-2 transition-colors ${
+            className={`py-4 px-6 text-xs font-bold transition-all border-b-2 ${
               tab === t.id
-                ? "border-emerald-500 text-emerald-400"
-                : "border-transparent text-zinc-500 hover:text-zinc-300"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-slate-400 hover:text-slate-600"
             }`}
           >
             {t.label}
@@ -48,189 +47,147 @@ export default function ContentPanel({ content, generating }) {
       </div>
 
       {/* Tab content */}
-      <div className="p-5 flex-1">
-        {tab === "twitter" && <TwitterTab thread={content.twitter_thread} copy={copy} copied={copied} />}
-        {tab === "press"   && <PressTab statement={content.press_statement} copy={copy} copied={copied} />}
-        {tab === "oped"    && <OpEdTab oped={content.op_ed} copy={copy} copied={copied} />}
+      <div className="p-8">
+        <div className="max-w-3xl mx-auto">
+          {tab === "twitter" && <TwitterTab thread={content.twitter_thread} copy={copy} copied={copied} />}
+          {tab === "press"   && <PressTab statement={content.press_statement} copy={copy} copied={copied} />}
+          {tab === "oped"    && <OpEdTab oped={content.op_ed} copy={copy} copied={copied} />}
+        </div>
       </div>
     </div>
   );
 }
 
-// ── Twitter thread tab ──────────────────────────────────────────────
 function TwitterTab({ thread, copy, copied }) {
   const full = (thread || []).join("\n\n");
 
   return (
-    <div className="max-w-2xl space-y-3">
-      <div className="flex items-center justify-between mb-1">
-        <p className="text-xs text-zinc-500">{thread?.length || 0}-tweet thread · copy each or all at once</p>
-        <CopyBtn onClick={() => copy(full, "thread-all")} copied={copied === "thread-all"} label="Copy all" />
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Twitter Flow</h3>
+        <CopyBtn onClick={() => copy(full, "thread-all")} copied={copied === "thread-all"} label="Copy Thread" />
       </div>
 
-      {(thread || []).map((tweet, i) => (
-        <div key={i} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 group">
-          <div className="flex gap-3">
-            <div className="w-7 h-7 rounded-full bg-emerald-800 flex items-center justify-center text-xs font-bold text-emerald-200 shrink-0 mt-0.5">
-              {i + 1}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-zinc-200 leading-relaxed whitespace-pre-wrap">{tweet}</p>
-              <div className="flex items-center justify-between mt-2.5">
-                <span className={`text-xs font-mono ${tweet.length > 270 ? "text-red-400" : "text-zinc-600"}`}>
-                  {tweet.length} / 280
-                </span>
-                <CopyBtn onClick={() => copy(tweet, `tweet-${i}`)} copied={copied === `tweet-${i}`} />
-              </div>
+      <div className="space-y-4">
+        {(thread || []).map((tweet, i) => (
+          <div key={i} className="p-6 border border-slate-200 rounded-xl bg-white space-y-4">
+            <p className="text-base text-slate-800 font-medium leading-relaxed">{tweet}</p>
+            <div className="flex justify-between items-center pt-4 border-t border-slate-50">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Part {i + 1}</span>
+              <button 
+                onClick={() => copy(tweet, `tweet-${i}`)}
+                className="text-[10px] font-bold text-blue-600 hover:underline"
+              >
+                {copied === `tweet-${i}` ? "Copied" : "Copy Part"}
+              </button>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
 
-// ── Press statement tab ─────────────────────────────────────────────
 function PressTab({ statement, copy, copied }) {
   if (!statement) return null;
 
   const full = [
-    "FOR IMMEDIATE RELEASE",
-    "",
     statement.headline,
-    "",
     statement.dateline,
-    "",
     statement.lead_paragraph,
-    "",
     statement.context_paragraph,
-    "",
     statement.quote_paragraph,
-    "",
     statement.call_to_action,
-    "",
-    "###",
-    "",
     statement.boilerplate,
-    "",
     statement.contact,
-  ].join("\n");
-
-  const sections = [
-    { label: "Headline",          key: "headline",          bold: true },
-    { label: "Lead paragraph",    key: "lead_paragraph" },
-    { label: "Context",           key: "context_paragraph" },
-    { label: "Quote",             key: "quote_paragraph",   italic: true },
-    { label: "Call to action",    key: "call_to_action" },
-    { label: "Boilerplate",       key: "boilerplate",       muted: true },
-  ];
+  ].join("\n\n");
 
   return (
-    <div className="max-w-2xl">
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs text-zinc-500">Ready to send · replace placeholder names before publishing</p>
-        <CopyBtn onClick={() => copy(full, "press-all")} copied={copied === "press-all"} label="Copy full statement" />
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Official Statement</h3>
+        <CopyBtn onClick={() => copy(full, "press-all")} copied={copied === "press-all"} label="Copy Full Statement" />
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
-        {/* Release label */}
-        <div className="px-5 py-3 bg-zinc-800/60 border-b border-zinc-700/40">
-          <span className="text-[10px] font-semibold tracking-widest text-zinc-400 uppercase">For immediate release</span>
-          <span className="text-xs text-zinc-500 ml-4">{statement.dateline}</span>
+      <div className="p-10 border border-slate-200 rounded-xl bg-white space-y-8">
+        <div className="space-y-2">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{statement.dateline}</span>
+          <h1 className="text-2xl font-bold text-slate-950 tracking-tight">{statement.headline}</h1>
+        </div>
+        
+        <div className="space-y-6">
+          <p className="text-base text-slate-700 font-medium leading-relaxed">{statement.lead_paragraph}</p>
+          <p className="text-base text-slate-700 font-medium leading-relaxed">{statement.context_paragraph}</p>
+          <div className="border-l-4 border-slate-100 pl-6 py-2">
+            <p className="text-lg italic text-slate-800 font-medium">"{statement.quote_paragraph}"</p>
+          </div>
+          <p className="text-base text-slate-700 font-medium leading-relaxed">{statement.call_to_action}</p>
         </div>
 
-        <div className="p-5 space-y-5">
-          {sections.map(({ label, key, bold, italic, muted }) => (
-            <div key={key}>
-              <div className="text-[10px] text-emerald-600 uppercase tracking-wider font-medium mb-1.5">{label}</div>
-              <p className={`text-sm leading-relaxed ${
-                bold ? "font-semibold text-white text-base" :
-                italic ? "italic text-zinc-300" :
-                muted ? "text-zinc-500" :
-                "text-zinc-300"
-              }`}>
-                {statement[key]}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <div className="px-5 py-3 border-t border-zinc-800/60 bg-zinc-900/60">
-          <p className="text-xs text-zinc-500">{statement.contact}</p>
+        <div className="pt-8 border-t border-slate-100 space-y-4">
+          <p className="text-xs text-slate-500 leading-relaxed italic">{statement.boilerplate}</p>
+          <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">Contact: {statement.contact}</p>
         </div>
       </div>
     </div>
   );
 }
 
-// ── Op-ed tab ───────────────────────────────────────────────────────
 function OpEdTab({ oped, copy, copied }) {
   if (!oped) return null;
 
   const pointsText = (oped.talking_points || []).map((p, i) => `${i + 1}. ${p}`).join("\n\n");
 
   return (
-    <div className="max-w-2xl space-y-4">
-      {/* Headline + angle */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-3">
-        <div>
-          <div className="text-[10px] text-emerald-600 uppercase tracking-wider font-medium mb-1">Suggested headline</div>
-          <p className="text-base font-semibold text-white leading-snug">{oped.suggested_headline}</p>
-        </div>
-        <div>
-          <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-medium mb-1">Unique angle</div>
-          <p className="text-sm text-zinc-400">{oped.angle_summary}</p>
-        </div>
-        <div>
-          <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-medium mb-1">Opening line</div>
-          <p className="text-sm text-zinc-300 italic leading-relaxed">"{oped.opening_line}"</p>
-        </div>
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Strategic Narrative</h3>
       </div>
 
-      {/* Talking points */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
-        <div className="flex items-center justify-between mb-3">
-          <div className="text-[10px] text-emerald-600 uppercase tracking-wider font-medium">5 talking points</div>
-          <CopyBtn onClick={() => copy(pointsText, "points")} copied={copied === "points"} />
+      <div className="grid grid-cols-1 gap-6">
+        <div className="p-8 border border-slate-200 rounded-xl bg-white space-y-6">
+          <div className="space-y-2">
+            <h3 className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Recommended Title</h3>
+            <p className="text-xl font-bold text-slate-900 tracking-tight">{oped.suggested_headline}</p>
+          </div>
+          <p className="text-base text-slate-600 font-medium italic">"{oped.opening_line}"</p>
+          <div className="flex gap-2 flex-wrap pt-4 border-t border-slate-50">
+            {(oped.suggested_outlets || []).map((o, i) => (
+              <span key={i} className="text-[10px] font-bold bg-slate-50 border border-slate-100 text-slate-500 px-3 py-1 rounded-md">{o}</span>
+            ))}
+          </div>
         </div>
-        <ol className="space-y-3">
-          {(oped.talking_points || []).map((pt, i) => (
-            <li key={i} className="flex gap-3 text-sm">
-              <span className="text-emerald-500 font-bold shrink-0 mt-0.5">{i + 1}.</span>
-              <span className="text-zinc-300 leading-relaxed">{pt}</span>
-            </li>
-          ))}
-        </ol>
-      </div>
 
-      {/* Outlets + pitch note */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
-        <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-medium mb-2">Suggested outlets</div>
-        <div className="flex gap-2 flex-wrap mb-3">
-          {(oped.suggested_outlets || []).map((o, i) => (
-            <span key={i} className="text-xs bg-zinc-800 border border-zinc-700 text-zinc-300 px-3 py-1 rounded-full">{o}</span>
-          ))}
+        <div className="p-8 border border-slate-200 rounded-xl bg-white space-y-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Core Points</h3>
+            <CopyBtn onClick={() => copy(pointsText, "points")} copied={copied === "points"} label="Copy Points" />
+          </div>
+          <div className="space-y-4">
+            {(oped.talking_points || []).map((pt, i) => (
+              <div key={i} className="flex gap-4">
+                <span className="text-blue-500 font-bold">0{i + 1}</span>
+                <p className="text-sm text-slate-700 font-medium leading-relaxed">{pt}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        {oped.pitch_note && (
-          <p className="text-xs text-zinc-500 italic">{oped.pitch_note}</p>
-        )}
       </div>
     </div>
   );
 }
 
-// ── Shared copy button ──────────────────────────────────────────────
 function CopyBtn({ onClick, copied, label = "Copy" }) {
   return (
     <button
       onClick={onClick}
-      className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all ${
+      className={`text-[10px] px-4 py-2 rounded-lg font-bold uppercase transition-all ${
         copied
-          ? "bg-emerald-700 text-white"
-          : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200"
+          ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
+          : "bg-blue-600 text-white hover:bg-blue-700 shadow-none"
       }`}
     >
-      {copied ? "✓ Copied" : label}
+      {copied ? "Copied" : label}
     </button>
   );
 }

@@ -1,36 +1,40 @@
-import { ANGLES, urgencyStyle } from "../utils/constants.js";
+import { ANGLES } from "../utils/constants.js";
 
 export default function StoryPanel({ story, onGenerate, generating, hasContent }) {
   const cls = story.classification;
   const angle = ANGLES[cls?.angle] || ANGLES.welfare;
-  const urgency = urgencyStyle(cls?.urgency_score || 0);
   const score = cls?.urgency_score || 0;
 
   return (
-    <div className="border-b border-zinc-800/60 bg-zinc-900/40 p-5">
+    <div className="p-8 space-y-8 animate-in fade-in duration-500">
       {/* Title + meta */}
-      <div className="flex items-start gap-4 mb-4">
-        <div className="flex-1 min-w-0">
-          <h2 className="text-base font-semibold text-zinc-100 leading-snug mb-2">
+      <div className="flex flex-col gap-6">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Active Selection</span>
+          </div>
+          <h1 className="text-3xl font-bold text-slate-900 leading-tight tracking-tight">
             {story.title}
-          </h2>
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className={`tag ${angle.bg} ${angle.text}`}>
-              <span className={`inline-block w-1.5 h-1.5 rounded-full ${angle.dot} mr-1.5 align-middle`} />
+          </h1>
+          <div className="flex items-center gap-4 flex-wrap">
+            <span className="text-xs font-semibold px-3 py-1 bg-slate-100 text-slate-700 rounded-lg">
               {angle.label}
             </span>
-            <span className={`tag font-mono font-semibold ${urgency.bg} ${urgency.color}`}>
-              {score}/10 urgency
+            <span className={`text-xs font-semibold px-3 py-1 border rounded-lg ${score > 6 ? "border-blue-200 text-blue-700 bg-blue-50" : "border-slate-200 text-slate-600 bg-slate-50"}`}>
+              Priority {score}/10
             </span>
-            <span className="text-xs text-zinc-500">{story.source}</span>
+            <span className="text-xs font-medium text-slate-400">
+              {story.source}
+            </span>
             {story.url && (
               <a
                 href={story.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-emerald-500 hover:text-emerald-400 underline underline-offset-2 ml-auto"
+                className="text-xs font-bold text-blue-600 hover:underline"
               >
-                Read original ↗
+                Source Link ↗
               </a>
             )}
           </div>
@@ -40,44 +44,49 @@ export default function StoryPanel({ story, onGenerate, generating, hasContent }
         <button
           onClick={onGenerate}
           disabled={generating}
-          className="btn-primary shrink-0"
+          className="w-full md:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-none"
         >
           {generating ? (
-            <><span className="animate-spin text-base leading-none">⟳</span> Generating...</>
-          ) : hasContent ? (
-            <><span>↺</span> Regenerate</>
+            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
           ) : (
-            <><span>✦</span> Generate content</>
+            <span className="text-lg">✧</span>
           )}
+          {generating ? "PROCESSING..." : hasContent ? "RE-ANALYZE" : "GET ANALYSIS"}
         </button>
       </div>
 
+      <div className="h-px bg-slate-100" />
+
       {/* Classification cards */}
       {cls && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {/* Urgency reason */}
-          <div className="bg-zinc-900 border border-zinc-800/60 rounded-xl p-3">
-            <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-medium mb-1">Why this urgency</div>
-            <p className="text-xs text-zinc-300 leading-relaxed">{cls.urgency_reason}</p>
-          </div>
+        <div className="grid grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Urgency reason */}
+            <div className="p-6 border border-slate-200 rounded-xl bg-white space-y-3">
+              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Logic</h3>
+              <p className="text-sm text-slate-700 font-medium leading-relaxed">{cls.urgency_reason}</p>
+            </div>
 
-          {/* Key facts */}
-          <div className="bg-zinc-900 border border-zinc-800/60 rounded-xl p-3">
-            <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-medium mb-1">Key facts</div>
-            <ul className="space-y-1">
-              {(cls.key_facts || []).map((f, i) => (
-                <li key={i} className="flex gap-1.5 text-xs text-zinc-300">
-                  <span className="text-emerald-500 shrink-0 mt-0.5">✓</span>
-                  <span className="leading-relaxed">{f}</span>
-                </li>
-              ))}
-            </ul>
+            {/* Key facts */}
+            <div className="p-6 border border-slate-200 rounded-xl bg-white space-y-3">
+              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Observations</h3>
+              <ul className="space-y-2">
+                {(cls.key_facts || []).map((f, i) => (
+                  <li key={i} className="flex gap-3 text-sm text-slate-600 font-medium leading-relaxed">
+                    <span className="text-blue-500">•</span>
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Advocacy hook */}
-          <div className="bg-zinc-900 border border-zinc-800/60 rounded-xl p-3">
-            <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-medium mb-1">Strongest hook</div>
-            <p className="text-xs text-zinc-300 italic leading-relaxed">"{cls.advocacy_hook}"</p>
+          <div className="p-6 bg-slate-900 text-white rounded-xl space-y-3">
+            <h3 className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">Key Hook</h3>
+            <p className="text-lg font-bold italic leading-snug">
+              "{cls.advocacy_hook}"
+            </p>
           </div>
         </div>
       )}

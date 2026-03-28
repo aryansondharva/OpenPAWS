@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useStories, generateContent } from "./hooks/useStories.js";
+import LeftNav from "./components/LeftNav.jsx";
+import Topbar from "./components/Topbar.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import StoryPanel from "./components/StoryPanel.jsx";
 import ContentPanel from "./components/ContentPanel.jsx";
-import Topbar from "./components/Topbar.jsx";
+import Settings from "./components/Settings.jsx";
+
 
 export default function App() {
   const [daysBack, setDaysBack] = useState(7);
@@ -13,6 +16,8 @@ export default function App() {
   const [content, setContent] = useState(null);
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState(null);
+  const [showSettings, setShowSettings] = useState(false);
+
 
   const { stories, loading, error, meta, refetch } = useStories(daysBack);
 
@@ -44,7 +49,7 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-zinc-950 overflow-hidden">
+    <div className="h-screen flex flex-col bg-slate-50 text-slate-900 overflow-hidden">
       <Topbar
         loading={loading}
         meta={meta}
@@ -59,16 +64,36 @@ export default function App() {
       />
 
       {(error || genError) && (
-        <div className="mx-4 mt-2 px-4 py-2.5 bg-red-950/60 border border-red-800/50 rounded-xl text-red-300 text-sm flex items-center gap-2">
-          <span className="text-red-400">⚠</span>
-          {error || genError}
-          <button onClick={() => { }} className="ml-auto text-red-500 hover:text-red-300 text-xs">dismiss</button>
+        <div className="mx-6 mt-4 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+            <span className="text-lg">!</span>
+          </div>
+          <span className="font-semibold">{error || genError}</span>
+          <button onClick={() => { setGenError(null); }} className="ml-auto bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-lg text-xs font-bold transition-colors uppercase tracking-widest">dismiss</button>
         </div>
       )}
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Story list */}
-        <div className="w-[380px] flex-shrink-0 border-r border-zinc-800/60 overflow-y-auto">
+      <main className="flex flex-1 overflow-hidden p-6 gap-6">
+        {/* Left Column: Navigation */}
+        <LeftNav onOpenSettings={() => setShowSettings(true)} />
+
+
+        {/* Center Column: News Feed */}
+        <div className="flex-1 flex flex-col overflow-hidden min-w-[500px]">
+          <div className="flex items-center justify-between mb-10 px-4">
+            <div className="space-y-1">
+              <h1 className="text-2xl font-black text-slate-900 tracking-tight">Signal Feed</h1>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">{filtered.length} stories synchronized</p>
+              </div>
+            </div>
+            <div className="flex p-1 bg-slate-100/50 rounded-2xl border border-slate-100">
+              <button className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">Relevant</button>
+              <button className="px-5 py-2 text-[10px] font-black uppercase tracking-widest bg-white text-blue-600 rounded-xl shadow-sm border border-slate-200/50">Latest</button>
+              <button className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">Urgent</button>
+            </div>
+          </div>
           <Sidebar
             stories={filtered}
             loading={loading}
@@ -77,32 +102,51 @@ export default function App() {
           />
         </div>
 
-        {/* Right side: story detail + content */}
-        <div className="flex-1 overflow-y-auto flex flex-col">
+        {/* Right Column: Detailed Intelligence Panel */}
+        <div className="w-[480px] flex-shrink-0 flex flex-col bg-white rounded-[32px] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-y-auto overflow-x-hidden">
           {selectedStory ? (
-            <>
+            <div className="flex flex-col animate-in fade-in zoom-in-95 duration-700 w-full">
               <StoryPanel story={selectedStory} onGenerate={handleGenerate} generating={generating} hasContent={!!content} />
               {(content || generating) && (
                 <ContentPanel content={content} generating={generating} />
               )}
-            </>
+            </div>
           ) : (
             <Welcome />
           )}
+        </div>
+      </main>
+
+      <Settings isOpen={showSettings} onClose={() => setShowSettings(false)} />
+    </div>
+
+  );
+}
+
+
+function Welcome() {
+  return (
+    <div className="flex flex-col items-center justify-center flex-1 text-center px-12 py-12 bg-white animate-in fade-in duration-1000">
+      <div className="w-24 h-24 bg-blue-50/50 rounded-[32px] flex items-center justify-center mb-8 border border-blue-100/50 shadow-xl shadow-blue-900/5">
+        <span className="text-4xl">📡</span>
+      </div>
+
+      <div className="space-y-4 max-w-sm">
+        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+          Awaiting Selection
+        </h1>
+        <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
+          Select a signal from the feed to initialize strategic analysis and narrative extraction.
+        </p>
+      </div>
+
+      <div className="flex gap-4 mt-10">
+        <div className="px-5 py-2.5 bg-slate-50 rounded-2xl flex items-center gap-3 border border-slate-100 transition-all hover:bg-slate-100">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Live Stream Active</span>
         </div>
       </div>
     </div>
   );
 }
 
-function Welcome() {
-  return (
-    <div className="flex flex-col items-center justify-center flex-1 text-center px-12 gap-4">
-      <div className="text-5xl">🐾</div>
-      <div className="text-xl font-semibold text-zinc-200">News Opportunism Engine</div>
-      <p className="text-sm text-zinc-500 max-w-sm leading-relaxed">
-        Select a story from the feed on the left. The 24–48 hour advocacy window opens the moment a story breaks.
-      </p>
-    </div>
-  );
-}

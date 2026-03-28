@@ -20,8 +20,10 @@ export async function classifyStory(story) {
       angle: "welfare",
       urgency_score: 5,
       urgency_reason: "Manual classification - AI not available",
-      key_facts: [story.title, story.summary?.substring(0, 100) || ""].filter(Boolean),
-      advocacy_hook: "This story requires attention from animal advocates.",
+      key_facts: [story.title, story.summary?.substring(0, 100) || "", "Breaking story requiring immediate attention"].filter(Boolean),
+      advocacy_hook: `🚨 ${story.title?.substring(0, 50) || "Breaking news"} - This needs your attention NOW!`,
+      viral_angle: "This story has high viral potential due to shocking content",
+      trending_hashtags: ["#AnimalRights", "#Breaking", "#Viral", "#News"],
       angle_explanation: "Default classification - AI services unavailable",
     };
   }
