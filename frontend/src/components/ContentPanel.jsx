@@ -83,9 +83,13 @@ function TwitterTab({ thread, copy, copied }) {
                   {copied === `tweet-${i}` ? '✓ Copied' : 'Copy Part'}
                 </button>
                 <button
-                  onClick={() => window.open('https://x.com/aryansondharva', '_blank')}
+                  onClick={() => {
+                    // Create Twitter web intent URL with pre-filled content
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweet)}`;
+                    window.open(twitterUrl, '_blank', 'width=550,height=420');
+                  }}
                   className="flex items-center gap-1 text-[10px] font-bold text-black hover:text-blue-600 transition-colors"
-                  title="Open @aryansondharva on X"
+                  title="Post this tweet to X"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
