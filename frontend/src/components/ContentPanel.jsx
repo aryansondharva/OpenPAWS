@@ -48,7 +48,7 @@ export default function ContentPanel({ content, generating }) {
       </div>
 
       {/* Tab content */}
-      <div className="p-8">
+      <div className="p-6">
         <div className="max-w-3xl mx-auto">
           {tab === "twitter" && <TwitterTab thread={content.twitter_thread} copy={copy} copied={copied} />}
           {tab === "press"   && <PressTab statement={content.press_statement} copy={copy} copied={copied} />}

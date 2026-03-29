@@ -4,4 +4,6 @@ dist/
 .DS_Store
 *.log
 .vite/
+.vercel/
 x.md
+backend/data/*.json

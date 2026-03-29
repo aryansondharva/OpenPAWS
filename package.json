@@ -1,0 +1,11 @@
+{
+  "name": "openpaws-news-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Animal advocacy news opportunism engine",
+  "scripts": {
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "build": "cd frontend && npm run build",
+    "vercel-build": "cd frontend && npm install && npm run build"
+  }
+}

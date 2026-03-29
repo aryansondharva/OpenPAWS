@@ -14,7 +14,7 @@ export default function Sidebar({ stories, loading, selectedId, onSelect }) {
   );
 
   return (
-    <div className="flex flex-col gap-3 overflow-y-auto pr-3 custom-scrollbar flex-1 pb-10">
+    <div className="flex flex-col gap-2.5 overflow-y-auto pr-2 custom-scrollbar flex-1 pb-8">
       {stories.map((story, index) => (
         <StoryCard
           key={story.id}
@@ -49,7 +49,7 @@ function StoryCard({ story, selected, onSelect, index }) {
         <div className="absolute -inset-[2px] bg-gradient-to-r from-blue-600/50 to-indigo-600/50 rounded-[22px] blur-sm opacity-50 z-0 animate-pulse" />
       )}
 
-      <div className={`relative z-10 p-5 rounded-2xl border transition-all duration-300 ${
+      <div className={`relative z-10 p-4 rounded-2xl border transition-all duration-300 ${
         selected 
           ? "bg-white border-blue-500 shadow-[0_12px_32px_-8px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/10" 
           : "bg-white border-slate-100 hover:border-slate-300 shadow-sm hover:shadow-md"
@@ -60,7 +60,7 @@ function StoryCard({ story, selected, onSelect, index }) {
           selected ? angle.bg : "bg-slate-100 group-hover:bg-slate-300"
         } ${angle.dot}`} />
 
-        <div className="flex flex-col gap-3.5 pl-3">
+        <div className="flex flex-col gap-2.5 pl-2.5">
           {/* Header: Source + Meta */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -80,14 +80,14 @@ function StoryCard({ story, selected, onSelect, index }) {
           </div>
 
           {/* Title */}
-          <h2 className={`text-[15px] font-black leading-[1.4] transition-colors tracking-tight ${
+          <h2 className={`text-[13px] font-bold leading-[1.45] transition-colors tracking-tight ${
             selected ? "text-slate-900" : "text-slate-700 group-hover:text-slate-900"
           }`}>
             {story.title}
           </h2>
 
           {/* Tags / Indicators */}
-          <div className="flex items-center gap-2 pt-1">
+          <div className="flex items-center gap-1.5 pt-0.5">
             <div className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all ${
               selected 
                 ? "bg-blue-600 text-white border-blue-500 shadow-lg shadow-blue-200" 

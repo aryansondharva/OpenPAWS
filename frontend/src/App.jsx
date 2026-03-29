@@ -90,7 +90,7 @@ export default function App() {
         </div>
       )}
 
-      <main className="flex flex-1 overflow-hidden p-6 pl-24 gap-6">
+      <main className="flex flex-1 overflow-hidden p-5 pl-24 gap-5">
         {/* Left Column: Navigation (Fixed Component) */}
         <LeftNav
           onOpenSettings={() => setShowSettings(true)}
@@ -101,20 +101,20 @@ export default function App() {
 
 
         {/* Center Column: News Feed */}
-        <div className="flex-1 flex flex-col overflow-hidden min-w-[500px]">
+        <div className="flex-[55] flex flex-col overflow-hidden">
 
-          <div className="flex items-center justify-between mb-6 px-1">
+          <div className="flex items-center justify-between mb-4 px-1">
             <div className="space-y-1">
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">Signal Feed</h1>
+              <h1 className="text-xl font-black text-slate-900 tracking-tight">Signal Feed</h1>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">{filtered.length} stories synchronized</p>
               </div>
             </div>
-            <div className="flex p-1 bg-slate-100/50 rounded-2xl border border-slate-100">
-              <button className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">Relevant</button>
-              <button className="px-5 py-2 text-[10px] font-black uppercase tracking-widest bg-white text-blue-600 rounded-xl shadow-sm border border-slate-200/50">Latest</button>
-              <button className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">Urgent</button>
+            <div className="flex p-0.5 bg-slate-100/50 rounded-xl border border-slate-100">
+              <button className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">Relevant</button>
+              <button className="px-3.5 py-1.5 text-[9px] font-black uppercase tracking-widest bg-white text-blue-600 rounded-lg shadow-sm border border-slate-200/50">Latest</button>
+              <button className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">Urgent</button>
             </div>
           </div>
           <Sidebar
@@ -126,7 +126,7 @@ export default function App() {
         </div>
 
         {/* Right Column: Detailed Intelligence Panel */}
-        <div className="w-[480px] flex-shrink-0 flex flex-col bg-white rounded-[32px] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-y-auto overflow-x-hidden custom-scrollbar">
+        <div className="flex-[45] flex-shrink-0 flex flex-col bg-white rounded-[28px] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-y-auto overflow-x-hidden custom-scrollbar">
 
           {selectedStory ? (
             <div className="flex flex-col animate-in fade-in zoom-in-95 duration-700 w-full">
@@ -162,24 +162,24 @@ export default function App() {
 
 function Welcome() {
   return (
-    <div className="flex flex-col items-center justify-center flex-1 text-center px-12 py-12 bg-white animate-in fade-in duration-1000">
-      <div className="w-24 h-24 bg-blue-50/50 rounded-[32px] flex items-center justify-center mb-8 border border-blue-100/50 shadow-xl shadow-blue-900/5">
-        <span className="text-4xl">📡</span>
+    <div className="flex flex-col items-center justify-center flex-1 text-center px-10 py-10 bg-white animate-in fade-in duration-1000">
+      <div className="w-20 h-20 bg-blue-50/50 rounded-[28px] flex items-center justify-center mb-6 border border-blue-100/50 shadow-lg shadow-blue-900/5">
+        <span className="text-3xl">📡</span>
       </div>
 
-      <div className="space-y-4 max-w-sm">
-        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+      <div className="space-y-3 max-w-xs">
+        <h1 className="text-xl font-black text-slate-900 tracking-tight">
           Awaiting Selection
         </h1>
-        <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
+        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
           Select a signal from the feed to initialize strategic analysis and narrative extraction.
         </p>
       </div>
 
-      <div className="flex gap-4 mt-10">
-        <div className="px-5 py-2.5 bg-slate-50 rounded-2xl flex items-center gap-3 border border-slate-100 transition-all hover:bg-slate-100">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Live Stream Active</span>
+      <div className="flex gap-4 mt-8">
+        <div className="px-4 py-2 bg-slate-50 rounded-xl flex items-center gap-2.5 border border-slate-100 transition-all hover:bg-slate-100">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">Live Stream Active</span>
         </div>
       </div>
     </div>
