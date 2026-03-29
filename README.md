@@ -1,6 +1,7 @@
 # News Opportunism Engine
 
 <p align="center">
+  <b><a href="https://open-documentation.vercel.app/" target="_blank">Documentation</a></b> •
   <b><a href="#what-it-does">What it does</a></b> •
   <b><a href="#the-five-advocacy-angles">Angles</a></b> •
   <b><a href="#key-features">Key features</a></b> •
@@ -10,6 +11,8 @@
   <b><a href="#project-structure">Structure</a></b> •
   <b><a href="#what-to-build-next-v20-roadmap">Roadmap</a></b>
 </p>
+
+[Read the official Knowledge Base & Documentation](https://open-documentation.vercel.app/)
 
 
 Animal advocacy organizations run lean. When a major story breaks — an H5N1 outbreak spreading to dairy cattle, undercover footage from a factory farm, a new EPA ruling on CAFO runoff — the window to respond is 24 to 48 hours. After that, the news cycle moves on and the moment is gone.
@@ -145,11 +148,11 @@ Tested against live feeds over 7 days. Fetched 28 relevant stories, classified 2
 
 | Story | Angle | Urgency | Correct |
 |---|---|---|---|
-| H5N1 spreads to dairy cattle in 4 new states | Public health | 9/10 | ✓ |
-| Undercover footage from Iowa pig facility released | Welfare | 9/10 | ✓ |
-| EPA proposes stricter runoff rules for large CAFOs | Policy | 7/10 | ✓ |
-| Global livestock methane emissions reach new high | Environmental | 6/10 | ✓ |
-| Tyson Foods posts quarterly losses tied to avian flu | Economic | 7/10 | ✓ |
+| H5N1 spreads to dairy cattle in 4 new states | Public health | 8/10 | ✓ |
+| Undercover footage from Iowa pig facility released | Welfare | 8/10 | ✓ |
+| EPA proposes stricter runoff rules for large CAFOs | Policy | 6/10 | ✓ |
+| Global livestock methane emissions reach new high | Environmental | 5/10 | ✓ |
+| Tyson Foods posts quarterly losses tied to avian flu | Economic | 5/10 | ✓ |
 
 Classification accuracy: 19/20 correct. The one off was a story about beef tariffs that sits equally at the border of economic and policy — a judgment call either way.
 
