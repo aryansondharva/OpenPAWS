@@ -10,7 +10,7 @@ This tool is built for that exact problem.
 
 ## What it does
 
-Monitors six news sources simultaneously — GNews, Currents API, NewsData.io, NewsAPI, and 13 curated RSS feeds — filtering for animal agriculture stories in real time. Each story gets classified by advocacy angle and scored for urgency by Claude. When you find a story worth responding to, one click generates a full set of ready-to-publish content: a tweet thread, a press statement skeleton, and op-ed talking points with outlet suggestions.
+Monitors six news sources simultaneously — GNews, Currents API, NewsData.io, NewsAPI, and 13 curated RSS feeds — filtering for animal agriculture stories in real time. Each story gets classified by advocacy angle and scored for urgency by Gemini. When you find a story worth responding to, one click generates a full set of ready-to-publish content: a tweet thread, a press statement skeleton, and op-ed talking points with outlet suggestions.
 
 The whole thing, from story appearing in the feed to content on your clipboard, takes under two minutes.
 
@@ -32,48 +32,10 @@ The angle determines how the content is framed. A bird flu story classified as p
 
 ## Key features
 
-### 🚨 Urgency Alert System
-
-Stories scoring 8+ on urgency automatically trigger a persistent alert banner at the top of the dashboard. The banner shows:
-
-- Pulsing urgency indicators with color-coded severity (red for 9-10, amber for 8)
-- **Response window timer** — shows exactly how many hours remain in the 24-48 hour advocacy window
-- Expandable list of all high-urgency active alerts
-- **Browser notifications** (Notification API) when new high-urgency stories arrive
-- Individual and bulk dismiss controls
-
-### 📋 Content History & Export
-
-Every generated content set is automatically saved. The History panel provides:
-
-- Full list of past generations with story metadata, angle badges, and urgency scores
-- **Expandable previews** showing tweet thread snippets, press headlines, and op-ed angles
-- **Multi-format export**: Markdown (.md), Plain Text (.txt), JSON (.json)
-- **Copy as Markdown** with one click for pasting into documents
-- **Load in Editor** — reopen any past generation directly in the content panel
-- Delete individual entries or clear all history
-
-### 🔔 Push Notifications (Webhook/Slack/Discord)
-
-When high-urgency stories are detected during a fetch cycle, the engine automatically pushes alerts to configured endpoints:
-
-- **Slack integration** — rich Block Kit messages with story details, urgency score, and "Read Full Story" button
-- **Discord integration** — embedded messages with color-coded urgency
-- **Generic webhooks** — structured JSON payload for any HTTP endpoint
-- Configurable urgency threshold per webhook (default: 8+)
-- Optional angle filtering (only send welfare stories to one channel, policy to another)
-- Test button to verify connectivity before going live
-
-### 🏷️ Configurable Keywords
-
-The keyword filter that determines which stories appear in your feed is now fully editable from the UI:
-
-- **Category-based quick toggles** — turn entire keyword groups on/off (Disease, Factory Farming, Environment, etc.)
-- Individual keyword add/remove with tag-style interface
-- **Visual indicators** for custom vs. default keywords
-- Search/filter across all active keywords
-- Reset to defaults with one click
-- Changes take effect on next feed refresh
+-  **Urgency Alert System**: Persistent dashboard banners with 24-hour response timers for breaking news.
+-  **Content History & Export**: Auto-saves every generated tweet, press release, and op-ed for 1-click export.
+-  **Multi-Channel Push Alerts**: Instant Slack, Discord, Email, and webhook drops to auto-notify your team.
+-  **Configurable Keywords**: Quickly define, search, and toggle feed filters by category directly from the UI.
 
 ---
 
@@ -100,7 +62,7 @@ CDC Updates · Food Safety News · Farm Progress · Humane Society · Mercy For 
 Backend     Node.js + Express
 Frontend    React 18 + Tailwind CSS + Vite
 News        rss-parser + axios (multi-API)
-AI          Anthropic Claude (claude-sonnet-4-20250514)
+AI          Google Gemini (gemini-3.1-pro)
 Push        Slack/Discord/Generic Webhooks
 Storage     JSON file-based (history, webhooks, keywords)
 ```
@@ -109,7 +71,7 @@ Storage     JSON file-based (history, webhooks, keywords)
 
 ## Setup
 
-You need Node.js 18+ and an Anthropic API key. The news APIs are optional — the RSS feeds alone will get you real stories with no keys at all.
+You need Node.js 18+ and a Gemini API key. The news APIs are optional — the RSS feeds alone will get you real stories with no keys at all.
 
 **1. Clone the repo**
 
@@ -126,7 +88,7 @@ npm install
 cp .env.example .env
 ```
 
-Open `.env` and add your keys. The only required one is `ANTHROPIC_API_KEY`. Add as many of the news API keys as you have — each one adds more story coverage.
+Open `.env` and add your keys. The only required one is `GEMINI_API_KEY`. Add as many of the news API keys as you have — each one adds more story coverage.
 
 ```bash
 npm run dev
@@ -148,43 +110,22 @@ Open `http://localhost:5173`. Click **Refresh** and wait about 20–30 seconds f
 
 ## Project structure
 
-```
+```text
 openpaws/
-│
 ├── backend/
-│   ├── server.js                  Express server, caching, API routes
-│   ├── data/                      Persistent storage (auto-created)
-│   │   ├── history.json           Saved content generations
-│   │   ├── webhooks.json          Webhook subscriptions
-│   │   └── keywords.json          Custom keyword configuration
+│   ├── server.js           # API entry & caching layer
 │   └── services/
-│       ├── fetcher.js             All news APIs + RSS + deduplication + custom keywords
-│       ├── classifier.js          Claude: angle classification + urgency scoring
-│       ├── generator.js           Claude: tweet thread + press statement + op-ed
-│       └── notifier.js            Slack/Discord/webhook push delivery
-│
+│       ├── fetcher.js      # Aggregates 4 APIs & 13 RSS feeds  
+│       ├── classifier.js   # Gemini AI: Urgency & angle grading
+│       ├── generator.js    # Gemini AI: Generates press/tweets/op-eds
+│       ├── alerter.js      # Global Slack & Nodemailer dispatch
+│       └── notifier.js     # Webhook endpoints
 ├── frontend/
 │   └── src/
-│       ├── App.jsx                Root layout and state
-│       ├── hooks/
-│       │   └── useStories.js      Data fetching hook
-│       ├── utils/
-│       │   └── constants.js       Angle config, urgency styles, helpers
-│       ├── context/
-│       │   └── SettingsContext.jsx App-wide settings with localStorage
-│       └── components/
-│           ├── Topbar.jsx         Filters, refresh, date range
-│           ├── LeftNav.jsx        Navigation sidebar with feature access
-│           ├── Sidebar.jsx        Story list with skeleton loader
-│           ├── StoryPanel.jsx     Selected story detail + generate button
-│           ├── ContentPanel.jsx   Tabbed content: thread, press, op-ed
-│           ├── AlertBanner.jsx    Urgency alerts with response window timer
-│           ├── ContentHistory.jsx History modal with export (MD/TXT/JSON)
-│           ├── WebhookManager.jsx Slack/Discord/webhook push configuration
-│           ├── KeywordManager.jsx Configurable keyword filter UI
-│           └── Settings.jsx       App settings modal
-│
-└── README.md
+│       ├── components/     # React presentation layer (Tailwind CSS)
+│       ├── hooks/          # Data fetching logic
+│       └── context/        # Global app settings state
+└── data/                   # Persistent JSON storage (created on run)
 ```
 
 ---
@@ -253,5 +194,7 @@ Classification accuracy: 19/20 correct. The one off was a story about beef tarif
 The tweet threads came out cleanest. Short constraints, clear structure, and the narrative arc is easy to specify in the prompt. The press statements needed the most editing — mostly around the quote placeholder and making the boilerplate match the organization's actual language. The op-ed talking points were the most variable, which makes sense: a good op-ed argument depends heavily on the publication and the author's voice.
 
 The urgency scoring is the part I iterated on most. Early versions were overconfident — everything was a 7 or above. The current prompt ties the score to specific time-based criteria (is this breaking today? is there active legislation?) which produces a much more useful distribution. Low-urgency stories are still worth having in the feed for campaign planning — they just don't need a same-day response.
+
+---
 
 Built for the OpenPAWS internship work test, March 2026.
