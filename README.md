@@ -60,9 +60,8 @@ The angle determines how the content is framed. A bird flu story classified as p
 | [NewsData.io](https://newsdata.io) | 200 req/day | Welfare, investigations |
 | [NewsAPI](https://newsapi.org) | 100 req/day | Economic, company stories |
 
-### RSS feeds (no key, unlimited)
-
-CDC Updates · Food Safety News · Farm Progress · Humane Society · Mercy For Animals · Animal Equality · PETA · The Guardian (livestock) · Civil Eats · Inside Climate News · Mongabay · AgWeb · Reuters Environment
+### Free RSS feeds
+13 curated sources (CDC, Reuters, PETA, The Guardian, etc.). No keys needed.
 
 ---
 
@@ -81,7 +80,7 @@ Storage     JSON file-based (history, webhooks, keywords)
 
 ## Setup
 
-You need Node.js 18+ and a Gemini API key. The news APIs are optional — the RSS feeds alone will get you real stories with no keys at all.
+**Prerequisites:** Node.js 18+ and a `GEMINI_API_KEY`. *(News API keys are optional).*
 
 **1. Clone the repo**
 
@@ -98,7 +97,7 @@ npm install
 cp .env.example .env
 ```
 
-Open `.env` and add your keys. The only required one is `GEMINI_API_KEY`. Add as many of the news API keys as you have — each one adds more story coverage.
+Add your `GEMINI_API_KEY` to `.env`. (Other news keys are optional).
 
 ```bash
 npm run dev
@@ -114,7 +113,7 @@ npm run dev
 # Running at http://localhost:5173
 ```
 
-Open `http://localhost:5173`. Click **Refresh** and wait about 20–30 seconds for stories to load and classify. Select any story, hit **Generate content**, and your advocacy content is ready.
+Open `http://localhost:5173`. Hit **Refresh** to load stories, select one, and click **Generate**.
 
 ---
 
