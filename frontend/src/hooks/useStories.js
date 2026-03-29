@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { apiUrl } from "../utils/api.js";
 
 export function useStories(daysBack) {
   const [stories, setStories] = useState([]);
@@ -10,7 +11,7 @@ export function useStories(daysBack) {
     setLoading(true);
     setError(null);
     try {
-      const url = `/api/stories?days=${daysBack}${refresh ? "&refresh=true" : ""}`;
+      const url = apiUrl(`/api/stories?days=${daysBack}${refresh ? "&refresh=true" : ""}`);
       const res = await window.fetch(url);
       if (!res.ok) throw new Error(`Server returned ${res.status}`);
       const data = await res.json();
@@ -29,7 +30,7 @@ export function useStories(daysBack) {
 }
 
 export async function generateContent(story) {
-  const res = await window.fetch("/api/generate", {
+  const res = await window.fetch(apiUrl("/api/generate"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ story }),
@@ -38,3 +39,4 @@ export async function generateContent(story) {
   const data = await res.json();
   return data.content;
 }
+

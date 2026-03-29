@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { ANGLES } from "../utils/constants.js";
+import { apiUrl } from "../utils/api.js";
 
 export default function WebhookManager({ isOpen, onClose }) {
   const [webhooks, setWebhooks] = useState([]);
@@ -17,7 +18,7 @@ export default function WebhookManager({ isOpen, onClose }) {
   const fetchWebhooks = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/webhooks");
+      const res = await fetch(apiUrl("/api/webhooks"));
       const data = await res.json();
       setWebhooks(data.webhooks || []);
     } catch (err) {
@@ -35,7 +36,7 @@ export default function WebhookManager({ isOpen, onClose }) {
     e.preventDefault();
     if (!formUrl) return;
     try {
-      const res = await fetch("/api/webhooks", {
+      const res = await fetch(apiUrl("/api/webhooks"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -61,7 +62,7 @@ export default function WebhookManager({ isOpen, onClose }) {
 
   const deleteWebhook = async (id) => {
     try {
-      await fetch(`/api/webhooks/${id}`, { method: "DELETE" });
+      await fetch(apiUrl(`/api/webhooks/${id}`), { method: "DELETE" });
       setWebhooks((prev) => prev.filter((h) => h.id !== id));
     } catch (err) {
       console.error("Delete failed:", err);
@@ -70,7 +71,7 @@ export default function WebhookManager({ isOpen, onClose }) {
 
   const toggleWebhook = async (id, active) => {
     try {
-      const res = await fetch(`/api/webhooks/${id}`, {
+      const res = await fetch(apiUrl(`/api/webhooks/${id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ active: !active }),
@@ -88,7 +89,7 @@ export default function WebhookManager({ isOpen, onClose }) {
     setTestingId(id);
     setTestResult(null);
     try {
-      const res = await fetch(`/api/webhooks/test/${id}`, { method: "POST" });
+      const res = await fetch(apiUrl(`/api/webhooks/test/${id}`), { method: "POST" });
       const data = await res.json();
       setTestResult({ id, success: data.success });
     } catch (err) {

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { apiUrl } from "../utils/api.js";
 
 // Default keyword categories for visual grouping
 const CATEGORIES = {
@@ -27,7 +28,7 @@ export default function KeywordManager({ isOpen, onClose, onKeywordsChanged }) {
   const fetchKeywords = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/keywords");
+      const res = await fetch(apiUrl("/api/keywords"));
       const data = await res.json();
       setKeywords(data.keywords || []);
       setDefaults(data.defaults || []);
@@ -47,7 +48,7 @@ export default function KeywordManager({ isOpen, onClose, onKeywordsChanged }) {
   const saveKeywords = async () => {
     setSaving(true);
     try {
-      await fetch("/api/keywords", {
+      await fetch(apiUrl("/api/keywords"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ keywords }),
@@ -66,7 +67,7 @@ export default function KeywordManager({ isOpen, onClose, onKeywordsChanged }) {
 
   const resetToDefaults = async () => {
     try {
-      await fetch("/api/keywords", { method: "DELETE" });
+      await fetch(apiUrl("/api/keywords"), { method: "DELETE" });
       setKeywords([...defaults]);
       setIsCustom(false);
       setHasChanges(false);

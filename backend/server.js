@@ -20,8 +20,21 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const CACHE_MS = (parseInt(process.env.CACHE_MINUTES) || 15) * 60 * 1000;
 
-app.use(cors());
+const allowedOrigins = process.env.FRONTEND_URL
+  ? [process.env.FRONTEND_URL, "http://localhost:5173"]
+  : ["http://localhost:5173"];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (curl, Postman, server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error(`CORS: origin ${origin} not allowed`));
+  },
+  credentials: true,
+}));
 app.use(express.json());
+
 
 // ─────────────────────────────────────────────
 //  In-memory cache

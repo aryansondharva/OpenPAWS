@@ -2,23 +2,9 @@
   "version": 2,
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "dist",
-  "installCommand": "npm install --prefix api && npm install --prefix backend && npm install --prefix frontend",
+  "installCommand": "npm install --prefix frontend",
   "framework": null,
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/server.js" }
-  ],
-  "functions": {
-    "api/server.js": {
-      "maxDuration": 60,
-      "memory": 1024,
-      "includeFiles": "backend/**"
-    }
-  },
-  "env": {
-    "GEMINI_API_KEY": "@gemini-api-key",
-    "GNEWS_API_KEY": "@gnews-api-key",
-    "CURRENTS_API_KEY": "@currents-api-key",
-    "NEWSDATA_API_KEY": "@newsdata-api-key",
-    "NEWSAPI_KEY": "@newsapi-key"
-  }
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

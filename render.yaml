@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: openpaws-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GNEWS_API_KEY
+        sync: false
+      - key: CURRENTS_API_KEY
+        sync: false
+      - key: NEWSDATA_API_KEY
+        sync: false
+      - key: NEWSAPI_KEY
+        sync: false
+      - key: CACHE_MINUTES
+        value: "15"

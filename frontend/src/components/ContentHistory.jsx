@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { timeAgo, ANGLES } from "../utils/constants.js";
+import { apiUrl } from "../utils/api.js";
 
-const API = "/api/history";
+const API = apiUrl("/api/history");
 
 export default function ContentHistory({ isOpen, onClose, onLoadContent }) {
   const [history, setHistory] = useState([]);
