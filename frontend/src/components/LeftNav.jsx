@@ -3,13 +3,23 @@ import { useSettings } from "../context/SettingsContext";
 
 const NAV_ITEMS = [
   { id: "feed", label: "Feed", icon: "📨" },
-  { id: "saved", label: "Saved", icon: "🔖" },
+  { id: "history", label: "History", icon: "📋" },
+  { id: "webhooks", label: "Push Alerts", icon: "🔔" },
+  { id: "keywords", label: "Keywords", icon: "🏷️" },
   { id: "discover", label: "Discover", icon: "🌍" },
-  { id: "tags", label: "Tags", icon: "🏷️" },
 ];
 
-export default function LeftNav({ onOpenSettings }) {
+export default function LeftNav({ onOpenSettings, onOpenHistory, onOpenWebhooks, onOpenKeywords }) {
   const { settings } = useSettings();
+
+  const handleNavClick = (id) => {
+    switch (id) {
+      case "history": onOpenHistory?.(); break;
+      case "webhooks": onOpenWebhooks?.(); break;
+      case "keywords": onOpenKeywords?.(); break;
+      default: break;
+    }
+  };
 
   return (
     <aside className="fixed left-0 top-0 bottom-0 z-[100] flex group transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:w-64 w-20">
@@ -30,6 +40,7 @@ export default function LeftNav({ onOpenSettings }) {
           {NAV_ITEMS.map((item) => (
             <button
               key={item.id}
+              onClick={() => handleNavClick(item.id)}
               className={`flex items-center w-full rounded-2xl transition-all duration-300 group/btn h-12 relative overflow-hidden ${
                 item.id === "feed"
                   ? "bg-blue-50 text-blue-600"
@@ -48,6 +59,11 @@ export default function LeftNav({ onOpenSettings }) {
               {/* Active Indicator Strip */}
               {item.id === "feed" && (
                 <div className="absolute left-0 top-3 bottom-3 w-1 bg-blue-600 rounded-r-full" />
+              )}
+
+              {/* Notification dot for push alerts */}
+              {item.id === "webhooks" && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
               )}
             </button>
           ))}

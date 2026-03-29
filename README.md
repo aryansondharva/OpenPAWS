@@ -30,6 +30,53 @@ The angle determines how the content is framed. A bird flu story classified as p
 
 ---
 
+## Key features
+
+### 🚨 Urgency Alert System
+
+Stories scoring 8+ on urgency automatically trigger a persistent alert banner at the top of the dashboard. The banner shows:
+
+- Pulsing urgency indicators with color-coded severity (red for 9-10, amber for 8)
+- **Response window timer** — shows exactly how many hours remain in the 24-48 hour advocacy window
+- Expandable list of all high-urgency active alerts
+- **Browser notifications** (Notification API) when new high-urgency stories arrive
+- Individual and bulk dismiss controls
+
+### 📋 Content History & Export
+
+Every generated content set is automatically saved. The History panel provides:
+
+- Full list of past generations with story metadata, angle badges, and urgency scores
+- **Expandable previews** showing tweet thread snippets, press headlines, and op-ed angles
+- **Multi-format export**: Markdown (.md), Plain Text (.txt), JSON (.json)
+- **Copy as Markdown** with one click for pasting into documents
+- **Load in Editor** — reopen any past generation directly in the content panel
+- Delete individual entries or clear all history
+
+### 🔔 Push Notifications (Webhook/Slack/Discord)
+
+When high-urgency stories are detected during a fetch cycle, the engine automatically pushes alerts to configured endpoints:
+
+- **Slack integration** — rich Block Kit messages with story details, urgency score, and "Read Full Story" button
+- **Discord integration** — embedded messages with color-coded urgency
+- **Generic webhooks** — structured JSON payload for any HTTP endpoint
+- Configurable urgency threshold per webhook (default: 8+)
+- Optional angle filtering (only send welfare stories to one channel, policy to another)
+- Test button to verify connectivity before going live
+
+### 🏷️ Configurable Keywords
+
+The keyword filter that determines which stories appear in your feed is now fully editable from the UI:
+
+- **Category-based quick toggles** — turn entire keyword groups on/off (Disease, Factory Farming, Environment, etc.)
+- Individual keyword add/remove with tag-style interface
+- **Visual indicators** for custom vs. default keywords
+- Search/filter across all active keywords
+- Reset to defaults with one click
+- Changes take effect on next feed refresh
+
+---
+
 ## News sources
 
 ### Free APIs (all have generous free tiers)
@@ -54,6 +101,8 @@ Backend     Node.js + Express
 Frontend    React 18 + Tailwind CSS + Vite
 News        rss-parser + axios (multi-API)
 AI          Anthropic Claude (claude-sonnet-4-20250514)
+Push        Slack/Discord/Generic Webhooks
+Storage     JSON file-based (history, webhooks, keywords)
 ```
 
 ---
@@ -104,10 +153,15 @@ openpaws/
 │
 ├── backend/
 │   ├── server.js                  Express server, caching, API routes
+│   ├── data/                      Persistent storage (auto-created)
+│   │   ├── history.json           Saved content generations
+│   │   ├── webhooks.json          Webhook subscriptions
+│   │   └── keywords.json          Custom keyword configuration
 │   └── services/
-│       ├── fetcher.js             All news APIs + RSS combined + deduplication
+│       ├── fetcher.js             All news APIs + RSS + deduplication + custom keywords
 │       ├── classifier.js          Claude: angle classification + urgency scoring
-│       └── generator.js          Claude: tweet thread + press statement + op-ed
+│       ├── generator.js           Claude: tweet thread + press statement + op-ed
+│       └── notifier.js            Slack/Discord/webhook push delivery
 │
 ├── frontend/
 │   └── src/
@@ -116,11 +170,19 @@ openpaws/
 │       │   └── useStories.js      Data fetching hook
 │       ├── utils/
 │       │   └── constants.js       Angle config, urgency styles, helpers
+│       ├── context/
+│       │   └── SettingsContext.jsx App-wide settings with localStorage
 │       └── components/
 │           ├── Topbar.jsx         Filters, refresh, date range
+│           ├── LeftNav.jsx        Navigation sidebar with feature access
 │           ├── Sidebar.jsx        Story list with skeleton loader
 │           ├── StoryPanel.jsx     Selected story detail + generate button
-│           └── ContentPanel.jsx   Tabbed content: thread, press, op-ed
+│           ├── ContentPanel.jsx   Tabbed content: thread, press, op-ed
+│           ├── AlertBanner.jsx    Urgency alerts with response window timer
+│           ├── ContentHistory.jsx History modal with export (MD/TXT/JSON)
+│           ├── WebhookManager.jsx Slack/Discord/webhook push configuration
+│           ├── KeywordManager.jsx Configurable keyword filter UI
+│           └── Settings.jsx       App settings modal
 │
 └── README.md
 ```
@@ -133,8 +195,25 @@ openpaws/
 GET  /api/stories               Fetch and classify stories (default: last 7 days)
 GET  /api/stories?days=3        Change the lookback window
 GET  /api/stories?refresh=true  Force bypass cache
-POST /api/generate              { story } → { content }
+POST /api/generate              { story } → { content } (auto-saved to history)
 GET  /api/health                Key status + cache info
+
+GET  /api/alerts                High-urgency stories (8+ in last 24h)
+GET  /api/alerts?threshold=9    Custom urgency threshold
+
+GET  /api/history               All saved content generations
+DELETE /api/history/:id         Delete a single history entry
+DELETE /api/history             Clear all history
+
+GET  /api/webhooks              List webhook subscriptions
+POST /api/webhooks              Add webhook { url, label, urgencyThreshold, angles }
+PATCH /api/webhooks/:id         Update webhook settings
+DELETE /api/webhooks/:id        Remove webhook
+POST /api/webhooks/test/:id     Send test notification
+
+GET  /api/keywords              Current keyword config (custom or defaults)
+PUT  /api/keywords              Save custom keywords { keywords: [...] }
+DELETE /api/keywords            Reset to defaults
 ```
 
 Responses are cached for 15 minutes to avoid burning through free API quotas.
@@ -159,9 +238,9 @@ Classification accuracy: 19/20 correct. The one off was a story about beef tarif
 
 ## What I'd build next
 
-**Slack and email push** — instead of opening the dashboard, a story above urgency 8 automatically drops into the team's Slack channel with a one-click generate button.
+**Organization voice customization** — let each organization set their tone, spokesperson name, and boilerplate. A PETA press release sounds nothing like a Humane Society one. The generator prompt should adapt automatically.
 
-**Configurable keywords** — right now the keyword list is in code. It should be editable from the UI so each organization can tune it for their focus area.
+**Inline content editor** — the press statements need the most editing. Building editing directly into the tool (contentEditable or textarea) would eliminate the need to copy to another app.
 
 **Feedback loop** — advocates rate the generated content after editing. Those ratings feed back into the prompts over time, improving output for each organization's specific voice.
 

@@ -70,9 +70,17 @@ const KEYWORDS = [
   "farm bill","epa livestock","cafo regulation","animal protection law",
 ];
 
+// Active keyword list (can be overridden by custom keywords)
+let activeKeywords = KEYWORDS;
+
 function isRelevant(text) {
   const t = text.toLowerCase();
-  return KEYWORDS.some((kw) => t.includes(kw));
+  return activeKeywords.some((kw) => t.includes(kw));
+}
+
+// Export the default keywords so the frontend can display them
+export function getDefaultKeywords() {
+  return [...KEYWORDS];
 }
 
 function cutoffDate(daysBack) {
@@ -286,7 +294,10 @@ async function fetchNewsAPI(daysBack, apiKey) {
 // ─────────────────────────────────────────────
 //  MAIN EXPORT — combine + deduplicate
 // ─────────────────────────────────────────────
-export async function fetchAllStories(daysBack = 7, keys = {}) {
+export async function fetchAllStories(daysBack = 7, keys = {}, customKeywords = null) {
+  // Set active keywords for this fetch cycle
+  activeKeywords = customKeywords && customKeywords.length > 0 ? customKeywords : KEYWORDS;
+  console.log(`Using ${customKeywords ? 'custom' : 'default'} keywords (${activeKeywords.length} terms)`);
   console.log("Fetching from all sources...");
 
   const [rssStories, gnews, currents, newsdata, newsapi] = await Promise.all([

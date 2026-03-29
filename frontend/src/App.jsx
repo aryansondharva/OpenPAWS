@@ -6,6 +6,10 @@ import Sidebar from "./components/Sidebar.jsx";
 import StoryPanel from "./components/StoryPanel.jsx";
 import ContentPanel from "./components/ContentPanel.jsx";
 import Settings from "./components/Settings.jsx";
+import AlertBanner from "./components/AlertBanner.jsx";
+import ContentHistory from "./components/ContentHistory.jsx";
+import WebhookManager from "./components/WebhookManager.jsx";
+import KeywordManager from "./components/KeywordManager.jsx";
 
 
 export default function App() {
@@ -17,6 +21,9 @@ export default function App() {
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [showWebhooks, setShowWebhooks] = useState(false);
+  const [showKeywords, setShowKeywords] = useState(false);
 
 
   const { stories, loading, error, meta, refetch } = useStories(daysBack);
@@ -48,6 +55,13 @@ export default function App() {
     }
   };
 
+  // Load content from history
+  const handleLoadFromHistory = (entry) => {
+    setSelectedStory(entry.story);
+    setContent(entry.content);
+    setGenError(null);
+  };
+
   return (
     <div className="h-screen flex flex-col bg-slate-50 text-slate-900 overflow-hidden">
       <Topbar
@@ -63,6 +77,9 @@ export default function App() {
         onRefresh={() => refetch(true)}
       />
 
+      {/* Urgency Alert Banner */}
+      <AlertBanner stories={stories} />
+
       {(error || genError) && (
         <div className="mx-6 mt-4 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
@@ -75,7 +92,12 @@ export default function App() {
 
       <main className="flex flex-1 overflow-hidden p-6 pl-24 gap-6">
         {/* Left Column: Navigation (Fixed Component) */}
-        <LeftNav onOpenSettings={() => setShowSettings(true)} />
+        <LeftNav
+          onOpenSettings={() => setShowSettings(true)}
+          onOpenHistory={() => setShowHistory(true)}
+          onOpenWebhooks={() => setShowWebhooks(true)}
+          onOpenKeywords={() => setShowKeywords(true)}
+        />
 
 
         {/* Center Column: News Feed */}
@@ -119,7 +141,19 @@ export default function App() {
         </div>
       </main>
 
+      {/* Modals */}
       <Settings isOpen={showSettings} onClose={() => setShowSettings(false)} />
+      <ContentHistory
+        isOpen={showHistory}
+        onClose={() => setShowHistory(false)}
+        onLoadContent={handleLoadFromHistory}
+      />
+      <WebhookManager isOpen={showWebhooks} onClose={() => setShowWebhooks(false)} />
+      <KeywordManager
+        isOpen={showKeywords}
+        onClose={() => setShowKeywords(false)}
+        onKeywordsChanged={() => refetch(true)}
+      />
     </div>
 
   );
@@ -151,4 +185,3 @@ function Welcome() {
     </div>
   );
 }
-
