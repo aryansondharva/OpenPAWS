@@ -12,6 +12,8 @@
   <b><a href="#what-to-build-next-v20-roadmap">Roadmap</a></b>
 </p>
 
+---
+
 [Read the official Knowledge Base & Documentation](https://open-documentation.vercel.app/)
 
 
