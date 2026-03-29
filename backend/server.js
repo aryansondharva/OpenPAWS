@@ -20,15 +20,26 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const CACHE_MS = (parseInt(process.env.CACHE_MINUTES) || 15) * 60 * 1000;
 
-const allowedOrigins = process.env.FRONTEND_URL
-  ? [process.env.FRONTEND_URL, "http://localhost:5173"]
-  : ["http://localhost:5173"];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://open-paws.vercel.app",
+  "https://openpaws.vercel.app"
+];
+
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL.replace(/\/$/, "")); // Strip trailing slash just in case
+}
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (curl, Postman, server-to-server)
     if (!origin) return callback(null, true);
+    
+    // Allow if it matches allowed origins exact
     if (allowedOrigins.includes(origin)) return callback(null, true);
+    
+    // Allow any vercel preview deployments for this project
+    if (origin.endsWith(".vercel.app")) return callback(null, true);
+
     callback(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true,
