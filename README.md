@@ -144,15 +144,14 @@ Classification accuracy: 19/20 correct. The one off was a story about beef tarif
 
 ---
 
-## What I'd build next
+## What I'd build next (v2.0 Roadmap)
 
-**Organization voice customization** — let each organization set their tone, spokesperson name, and boilerplate. A PETA press release sounds nothing like a Humane Society one. The generator prompt should adapt automatically.
-
-**Inline content editor** — the press statements need the most editing. Building editing directly into the tool (contentEditable or textarea) would eliminate the need to copy to another app.
-
-**Feedback loop** — advocates rate the generated content after editing. Those ratings feed back into the prompts over time, improving output for each organization's specific voice.
-
-**Multi-language support** — most of the world's factory farming happens outside English-language media. Extending to Spanish, Hindi, and Portuguese would make this genuinely global.
+-  **Browser Extension**: A native extension that lets advocates instantly generate campaigns from any news article they are actively reading on the web.
+-  **Organization-Specific AI Personas**: Upload past press releases so the AI natively learns and mimics your exact brand voice, cutting down manual edits to zero.
+-  **Vision AI Integration**: Auto-extract images & undercover video frames from news sources to generate highly specific visual descriptions in press statements.
+-  **1-Click Publishing**: Authenticate with Twitter/X and Mailchimp to push generated campaigns live directly from the dashboard.
+-  **Impact Tracking & Feedback Loop**: Pull social engagement metrics (views/retweets) on generated content to create a self-improving AI generation cycle.
+-  **Global Multi-language Pipeline**: Automatically ingest breaking non-English news (e.g. from Brazil/Asia) and localize campaigns for US advocates.
 
 ---
 
