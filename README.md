@@ -13,7 +13,7 @@
 </p>
 <br/>
 
-### [Read the official Knowledge Base & Documentation](https://open-documentation.vercel.app/)
+### <a href="https://open-documentation.vercel.app/" target="_blank">Read the official Knowledge Base & Documentation</a>
 
 
 Animal advocacy organizations run lean. When a major story breaks — an H5N1 outbreak spreading to dairy cattle, undercover footage from a factory farm, a new EPA ruling on CAFO runoff — the window to respond is 24 to 48 hours. After that, the news cycle moves on and the moment is gone.
