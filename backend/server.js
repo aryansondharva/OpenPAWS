@@ -8,6 +8,7 @@ import { fetchAllStories, getDefaultKeywords } from "./services/fetcher.js";
 import { classifyBatch } from "./services/classifier.js";
 import { generateContent } from "./services/generator.js";
 import { triggerWebhooks } from "./services/notifier.js";
+import { sendGlobalAlerts } from "./services/alerter.js";
 
 dotenv.config();
 
@@ -103,6 +104,13 @@ app.get("/api/stories", async (req, res) => {
     console.log(`Classifying ${Math.min(raw.length, 20)} of ${raw.length} stories...`);
 
     const classified = await classifyBatch(raw, 20);
+
+    // Global Slack & Email Alerts
+    for (const story of classified) {
+      if ((story.classification?.urgency_score || 0) >= 8) {
+        sendGlobalAlerts(story).catch((err) => console.warn("Global alert error:", err.message));
+      }
+    }
 
     // Trigger webhooks for high-urgency stories
     const webhooks = loadWebhooks().filter((h) => h.active);
