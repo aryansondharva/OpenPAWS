@@ -144,7 +144,7 @@ Classification accuracy: 19/20 correct. The one off was a story about beef tarif
 
 ---
 
-## What I'd build next (v2.0 Roadmap)
+## What to build next (v2.0 Roadmap)
 
 -  **Browser Extension**: A native extension that lets advocates instantly generate campaigns from any news article they are actively reading on the web.
 -  **Organization-Specific AI Personas**: Upload past press releases so the AI natively learns and mimics your exact brand voice, cutting down manual edits to zero.
