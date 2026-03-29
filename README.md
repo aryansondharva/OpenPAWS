@@ -4,8 +4,6 @@ Animal advocacy organizations run lean. When a major story breaks — an H5N1 ou
 
 Most organizations miss it. Not because they don't care, but because drafting a tweet thread, a press statement, and an op-ed pitch takes hours they don't have.
 
-This tool is built for that exact problem.
-
 ---
 
 ## What it does
@@ -127,37 +125,6 @@ openpaws/
 │       └── context/        # Global app settings state
 └── data/                   # Persistent JSON storage (created on run)
 ```
-
----
-
-## API
-
-```
-GET  /api/stories               Fetch and classify stories (default: last 7 days)
-GET  /api/stories?days=3        Change the lookback window
-GET  /api/stories?refresh=true  Force bypass cache
-POST /api/generate              { story } → { content } (auto-saved to history)
-GET  /api/health                Key status + cache info
-
-GET  /api/alerts                High-urgency stories (8+ in last 24h)
-GET  /api/alerts?threshold=9    Custom urgency threshold
-
-GET  /api/history               All saved content generations
-DELETE /api/history/:id         Delete a single history entry
-DELETE /api/history             Clear all history
-
-GET  /api/webhooks              List webhook subscriptions
-POST /api/webhooks              Add webhook { url, label, urgencyThreshold, angles }
-PATCH /api/webhooks/:id         Update webhook settings
-DELETE /api/webhooks/:id        Remove webhook
-POST /api/webhooks/test/:id     Send test notification
-
-GET  /api/keywords              Current keyword config (custom or defaults)
-PUT  /api/keywords              Save custom keywords { keywords: [...] }
-DELETE /api/keywords            Reset to defaults
-```
-
-Responses are cached for 15 minutes to avoid burning through free API quotas.
 
 ---
 
