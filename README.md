@@ -11,9 +11,8 @@
   <b><a href="#project-structure">Structure</a></b> •
   <b><a href="#what-to-build-next-v20-roadmap">Roadmap</a></b>
 </p>
-<br/>
 
-### <a href="https://open-documentation.vercel.app/" target="_blank">Read the official Knowledge Base & Documentation</a>
+### <a href="https://open-documentation.vercel.app/" target="_blank"> [ Documentation ] </a> 
 
 
 Animal advocacy organizations run lean. When a major story breaks — an H5N1 outbreak spreading to dairy cattle, undercover footage from a factory farm, a new EPA ruling on CAFO runoff — the window to respond is 24 to 48 hours. After that, the news cycle moves on and the moment is gone.
@@ -178,4 +177,4 @@ The urgency scoring is the part I iterated on most. Early versions were overconf
 
 ---
 
-Built for the OpenPAWS internship work test, March 2026.
+ News Opportunism Engine Powered by Open Paws 
