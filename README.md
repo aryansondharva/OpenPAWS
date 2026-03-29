@@ -1,5 +1,17 @@
 # News Opportunism Engine
 
+<p align="center">
+  <b><a href="#what-it-does">What it does</a></b> •
+  <b><a href="#the-five-advocacy-angles">Angles</a></b> •
+  <b><a href="#key-features">Key features</a></b> •
+  <b><a href="#news-sources">News sources</a></b> •
+  <b><a href="#stack">Stack</a></b> •
+  <b><a href="#setup">Setup</a></b> •
+  <b><a href="#project-structure">Structure</a></b> •
+  <b><a href="#what-to-build-next-v20-roadmap">Roadmap</a></b>
+</p>
+
+
 Animal advocacy organizations run lean. When a major story breaks — an H5N1 outbreak spreading to dairy cattle, undercover footage from a factory farm, a new EPA ruling on CAFO runoff — the window to respond is 24 to 48 hours. After that, the news cycle moves on and the moment is gone.
 
 Most organizations miss it. Not because they don't care, but because drafting a tweet thread, a press statement, and an op-ed pitch takes hours they don't have.
